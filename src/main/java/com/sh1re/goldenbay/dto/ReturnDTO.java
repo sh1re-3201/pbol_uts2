@@ -1,14 +1,34 @@
 package com.sh1re.goldenbay.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import java.time.LocalDateTime;
 
-import java.time.LocalDate;
-
-@Getter
-@Setter
 public class ReturnDTO {
     private Long id;
     private Long borrowingId;
-    private LocalDate returnDate;
+    private LocalDateTime returnDate;
+
+    // Getters and Setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getBorrowingId() {
+        return borrowingId;
+    }
+
+    public void setBorrowingId(Long borrowingId) {
+        this.borrowingId = borrowingId;
+    }
+
+    public LocalDateTime getReturnDate() {
+        return returnDate;
+    }
+
+    public void setReturnDate(LocalDateTime returnDate) {
+        this.returnDate = returnDate;
+    }
 }

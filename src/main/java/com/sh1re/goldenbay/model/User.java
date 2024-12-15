@@ -2,11 +2,11 @@ package com.sh1re.goldenbay.model;
 
 
 import jakarta.persistence.*;
-import lombok.Data;
+
 import java.time.LocalDateTime;
 
 @Entity
-@Data
+@Table(name = "Users")
 public class User {
 
     @Id
@@ -23,9 +23,60 @@ public class User {
     private String email;
 
     private LocalDateTime membershipDate;
+
+    public User() {
+    }
+
+    public Long getId() {
+        return this.id;
+    }
+
+    public String getUsername() {
+        return this.username;
+    }
+
+    public String getPassword() {
+        return this.password;
+    }
+
+    public Role getRole() {
+        return this.role;
+    }
+
+    public String getEmail() {
+        return this.email;
+    }
+
+    public LocalDateTime getMembershipDate() {
+        return this.membershipDate;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setMembershipDate(LocalDateTime membershipDate) {
+        this.membershipDate = membershipDate;
+    }
+
+    public String toString() {
+        return "User(id=" + this.getId() + ", username=" + this.getUsername() + ", password=" + this.getPassword() + ", role=" + this.getRole() + ", email=" + this.getEmail() + ", membershipDate=" + this.getMembershipDate() + ")";
+    }
 }
 
-enum Role {
-    ADMIN,
-    USER
-}
