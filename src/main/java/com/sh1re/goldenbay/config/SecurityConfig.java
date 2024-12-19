@@ -74,7 +74,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(
                         org.springframework.security.config.http.SessionCreationPolicy.STATELESS)) // Stateless session
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**").permitAll() // Public endpoints
+                        .requestMatchers("/auth/**", "/login", "/css/**", "/js/**", "/images/**").permitAll() // Public endpoints
                         .requestMatchers("/admin/**").hasRole("ADMIN") // Admin-only endpoints
                         .requestMatchers("/user/**").hasRole("USER") // User-only endpoints
                         .requestMatchers("/", "/error").permitAll() // Allow access to root and error URLs
@@ -83,6 +83,7 @@ public class SecurityConfig {
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {

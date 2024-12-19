@@ -3,8 +3,10 @@ package com.sh1re.goldenbay.controller;
 import com.sh1re.goldenbay.dto.ReturnDTO;
 import com.sh1re.goldenbay.service.ReturnService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -33,6 +35,17 @@ public class ReturnController {
     @GetMapping("/{id}")
     public ResponseEntity<ReturnDTO> getReturnById(@PathVariable Long id) {
         ReturnDTO returnEntity = returnService.getReturnById(id);
+        if (returnEntity == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Return record not found");
+        }
         return ResponseEntity.ok(returnEntity);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteReturn(@PathVariable Long id) {
+        returnService.deleteReturn(id);
+        return ResponseEntity.noContent().build();
+    }
+
+
 }

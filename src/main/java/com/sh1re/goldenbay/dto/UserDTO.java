@@ -1,6 +1,8 @@
 package com.sh1re.goldenbay.dto;
 
 import com.sh1re.goldenbay.model.Role;
+import lombok.Getter;
+import lombok.Setter;
 
 public class UserDTO {
     private Long id;

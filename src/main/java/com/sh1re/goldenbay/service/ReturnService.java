@@ -7,6 +7,7 @@ import com.sh1re.goldenbay.repository.BorrowingRepository;
 import com.sh1re.goldenbay.repository.ReturnRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,6 +22,7 @@ public class ReturnService {
     private BorrowingRepository borrowingRepository;
 
     // Create a new return record
+    @Transactional
     public ReturnDTO createReturn(ReturnDTO returnDTO) {
         Return returnEntity = convertToEntity(returnDTO);
         returnEntity = returnRepository.save(returnEntity);
@@ -37,16 +39,28 @@ public class ReturnService {
     // Get return by ID
     public ReturnDTO getReturnById(Long id) {
         Return returnEntity = returnRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Return not found"));
+                .orElseThrow(() -> new RuntimeException("Return not found with ID: " + id));
         return convertToDTO(returnEntity);
+    }
+
+    // Delete return by ID
+    @Transactional
+    public void deleteReturn(Long id) {
+        Return returnEntity = returnRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Return not found with ID: " + id));
+        returnRepository.delete(returnEntity);
     }
 
     // Convert DTO to Entity
     private Return convertToEntity(ReturnDTO returnDTO) {
+        if (returnDTO.getBorrowingId() == null) {
+            throw new IllegalArgumentException("Borrowing ID cannot be null");
+        }
+
+        Borrowing borrowing = borrowingRepository.findById(returnDTO.getBorrowingId())
+                .orElseThrow(() -> new RuntimeException("Borrowing not found with ID: " + returnDTO.getBorrowingId()));
         Return returnEntity = new Return();
         returnEntity.setReturnDate(returnDTO.getReturnDate());
-        Borrowing borrowing = borrowingRepository.findById(returnDTO.getBorrowingId())
-                .orElseThrow(() -> new RuntimeException("Borrowing not found"));
         returnEntity.setBorrowing(borrowing);
         return returnEntity;
     }
