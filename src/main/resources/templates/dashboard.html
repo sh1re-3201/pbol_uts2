@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Dashboard - Digital Library</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+<div class="container">
+    <h1>Welcome, <span th:text="${#authentication.name}">User</span>!</h1>
+
+    <!-- Admin Section -->
+    <div th:if="${#authentication.authorities.contains('ROLE_ADMIN')}">
+        <h2>Admin Dashboard</h2>
+        <ul>
+            <li><a th:href="@{/books}">Manage Books</a></li>
+            <li><a th:href="@{/users}">Manage Users</a></li>
+            <li><a th:href="@{/borrowings}">View Borrowing Transactions</a></li>
+            <li><a th:href="@{/returns}">View Return Transactions</a></li>
+        </ul>
+    </div>
+
+    <!-- User Section -->
+    <div th:if="${#authentication.authorities.contains('ROLE_USER')}">
+        <h2>User Dashboard</h2>
+        <ul>
+            <li><a th:href="@{/borrowings/my}">View Borrowed Books</a></li>
+            <li><a th:href="@{/borrowings/new}">Borrow a Book</a></li>
+            <li><a th:href="@{/returns/new}">Return a Book</a></li>
+        </ul>
+    </div>
+
+    <!-- Logout -->
+    <div class="logout">
+        <form th:action="@{/logout}" method="post">
+            <button type="submit" class="btn">Logout</button>
+        </form>
+    </div>
+</div>
+</body>
+</html>
