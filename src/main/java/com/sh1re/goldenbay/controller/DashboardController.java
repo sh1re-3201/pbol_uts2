@@ -15,7 +15,7 @@ public class DashboardController {
 
         //DEBUG statement
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        System.out.println("Authentication done for: " + auth);
+        System.out.println("Authentication done for: " + auth.getName());
 
         return "dashboard"; // Maps to dashboard.html
     }

@@ -3,6 +3,8 @@ package com.sh1re.goldenbay.controller;
 import com.sh1re.goldenbay.dto.LoginRequest;
 import com.sh1re.goldenbay.dto.LoginResponse;
 import com.sh1re.goldenbay.security.JwtUtil;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -27,14 +29,26 @@ public class AuthenticationController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest, HttpServletResponse response) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword())
         );
 
         String jwt = jwtUtil.generateToken(userDetailsService.loadUserByUsername(loginRequest.getUsername()));
+
+        // Add the token as an HTTP-only cookie
+        Cookie cookie = new Cookie("Authorization", jwt);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true); // Set to true if using HTTPS
+        cookie.setPath("/");
+        cookie.setMaxAge(3600); // 1 hour
+        response.addCookie(cookie);
+
+        // Return the token in the response body
         return ResponseEntity.ok(new LoginResponse(jwt));
     }
+
+
 
 //    @GetMapping("/login")
 //    public ResponseEntity<LoginResponse> JwtParser(LoginResponse loginResponse) {

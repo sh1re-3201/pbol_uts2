@@ -37,9 +37,10 @@
         function submitLogin() {
             const username = document.getElementById("username").value;
             const password = document.getElementById("password").value;
+
             console.log("Submitting login with username:", username);
 
-            fetch(loginUrl, {
+            fetch('/auth/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -48,23 +49,48 @@
             })
                 .then(response => {
                     console.log("Response status:", response.status);
-                    return response.json();
+                    if (response.ok) {
+                        return response.json(); // Parse the response if the status is OK
+                    } else {
+                        throw new Error('Login failed');
+                    }
                 })
                 .then(data => {
                     console.log("Response data:", data);
                     if (data.token) {
-                        console.log("Login successful. Redirecting...");
+                        console.log("Login successful. Storing token...");
                         localStorage.setItem('jwtToken', data.token); // Store the token
-                        window.location.href = dashboardUrl; // Redirect
+
+                        // Fetch the dashboard data programmatically
+                        fetch('/dashboard', {
+                            method: 'GET',
+                            headers: {
+                                'Authorization': `Bearer ${data.token}`
+                            }
+                        })
+                            .then(dashboardResponse => {
+                                if (dashboardResponse.ok) {
+                                    return dashboardResponse.text(); // Get the HTML content of the dashboard
+                                } else {
+                                    throw new Error('Failed to load dashboard');
+                                }
+                            })
+                            .then(html => {
+                                document.body.innerHTML = html; // Render the dashboard content
+                            })
+                            .catch(error => console.error("Error loading dashboard:", error));
                     } else {
-                        console.error("Login failed:", data);
+                        console.error("No token in response:", data);
                         alert('Invalid login credentials');
                     }
                 })
                 .catch(error => {
                     console.error("Error during login:", error);
+                    alert('An error occurred during login. Please try again.');
                 });
         }
+
+
 
     </script>
 </div>
