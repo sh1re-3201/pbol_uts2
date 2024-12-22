@@ -4,6 +4,8 @@ import com.sh1re.goldenbay.dto.UserDTO;
 import com.sh1re.goldenbay.model.User;
 import com.sh1re.goldenbay.model.Role;
 import com.sh1re.goldenbay.repository.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,11 +15,14 @@ import java.util.stream.Collectors;
 @Service
 public class UserService {
 
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
+
     @Autowired
     private UserRepository userRepository;
 
     // Create a new user
     public UserDTO createUser(UserDTO userDTO) {
+        logger.info("Creating a new user with username: {}", userDTO.getUsername());
         User user = convertToEntity(userDTO);
         user = userRepository.save(user);
         return convertToDTO(user);
@@ -25,6 +30,7 @@ public class UserService {
 
     // Get all users
     public List<UserDTO> getAllUsers() {
+        logger.info("Fetching all users");
         return userRepository.findAll().stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
@@ -32,6 +38,8 @@ public class UserService {
 
     // Get user by ID
     public UserDTO getUserById(Long id) {
+//        logger.info("Fetching user with ID: {}", id);
+        System.out.println("===================FETCHING USER WITH ID:" + id);
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         return convertToDTO(user);
@@ -39,6 +47,7 @@ public class UserService {
 
     // Update user
     public UserDTO updateUser(Long id, UserDTO userDTO) {
+        logger.info("Updating user with ID: {}", id);
         User existingUser = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         existingUser.setUsername(userDTO.getUsername());
@@ -50,6 +59,7 @@ public class UserService {
 
     // Delete user
     public void deleteUser(Long id) {
+        logger.info("Deleting user with ID: {}", id);
         userRepository.deleteById(id);
     }
 

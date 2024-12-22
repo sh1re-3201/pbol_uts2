@@ -14,7 +14,7 @@
     <div th:if="${param.logout}" class="success" th:text="'You have been successfully logged out.'"></div>
 
     <!-- Login Form -->
-    <form th:action="@{/auth/login}" method="post">
+    <form id="loginForm">
         <div class="form-group">
             <label for="username">Username:</label>
             <input type="text" id="username" name="username" placeholder="Enter your username" required>
@@ -24,10 +24,49 @@
             <input type="password" id="password" name="password" placeholder="Enter your password" required>
         </div>
         <div class="form-group">
-            <button type="submit" class="btn" aria-label="Login">Login</button>
+            <button type="button" class="btn" onclick="submitLogin()">Login</button>
         </div>
     </form>
-    
+
+    <!-- Thymeleaf Utility Script -->
+    <script th:inline="javascript">
+        /* Resolve URLs dynamically */
+        const loginUrl = /*[[@{/auth/login}]]*/ '/auth/login';
+        const dashboardUrl = /*[[@{/dashboard}]]*/ '/dashboard';
+
+        function submitLogin() {
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+            console.log("Submitting login with username:", username);
+
+            fetch(loginUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username, password })
+            })
+                .then(response => {
+                    console.log("Response status:", response.status);
+                    return response.json();
+                })
+                .then(data => {
+                    console.log("Response data:", data);
+                    if (data.token) {
+                        console.log("Login successful. Redirecting...");
+                        localStorage.setItem('jwtToken', data.token); // Store the token
+                        window.location.href = dashboardUrl; // Redirect
+                    } else {
+                        console.error("Login failed:", data);
+                        alert('Invalid login credentials');
+                    }
+                })
+                .catch(error => {
+                    console.error("Error during login:", error);
+                });
+        }
+
+    </script>
 </div>
 </body>
 </html>

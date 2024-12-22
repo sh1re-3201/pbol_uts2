@@ -14,10 +14,12 @@ import java.util.function.Function;
 @Component
 public class JwtUtil {
 
-    private final String SECRET_KEY = "secret";
+    private final String SECRET_KEY = "mariagresiaplenaanugrahfrumensiusgansalangiUniversitasSanataDharmaPainganJogjakarta123123123123123123";
 
     public String extractUsername(String token) {
-        return extractClaim(token, Claims::getSubject);
+        String username = extractClaim(token, Claims::getSubject);
+        System.out.println("Extracted username: " + username);
+        return username;
     }
 
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
@@ -46,10 +48,15 @@ public class JwtUtil {
 
     public boolean validateToken(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
-        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+        boolean isValid = username.equals(userDetails.getUsername()) && !isTokenExpired(token);
+        System.out.println("Validating token for username: " + username + ", isValid: " + isValid);
+        return isValid;
     }
 
     private boolean isTokenExpired(String token) {
-        return extractClaim(token, Claims::getExpiration).before(new Date());
+        Date expiration = extractClaim(token, Claims::getExpiration);
+        boolean isExpired = expiration.before(new Date());
+        System.out.println("Token expiration date: " + expiration + ", isExpired: " + isExpired);
+        return isExpired;
     }
 }

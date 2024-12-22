@@ -75,15 +75,16 @@ public class SecurityConfig {
                         org.springframework.security.config.http.SessionCreationPolicy.STATELESS)) // Stateless session
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**", "/login", "/css/**", "/js/**", "/images/**").permitAll() // Public endpoints
+                        .requestMatchers("/dashboard").authenticated() // Allow access to dashboard for authenticated users
                         .requestMatchers("/admin/**").hasRole("ADMIN") // Admin-only endpoints
                         .requestMatchers("/user/**").hasRole("USER") // User-only endpoints
                         .requestMatchers("/", "/error").permitAll() // Allow access to root and error URLs
                         .anyRequest().authenticated() // Secure all other endpoints
                 )
+                .formLogin(form -> form.disable())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
-
 
     @Bean
     public PasswordEncoder passwordEncoder() {

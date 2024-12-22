@@ -18,6 +18,7 @@ public class AuthenticationController {
     private final JwtUtil jwtUtil;
     private final UserDetailsService userDetailsService;
 
+
     public AuthenticationController(AuthenticationManager authenticationManager, JwtUtil jwtUtil,
                                     UserDetailsService userDetailsService) {
         this.authenticationManager = authenticationManager;
@@ -34,4 +35,9 @@ public class AuthenticationController {
         String jwt = jwtUtil.generateToken(userDetailsService.loadUserByUsername(loginRequest.getUsername()));
         return ResponseEntity.ok(new LoginResponse(jwt));
     }
+
+//    @GetMapping("/login")
+//    public ResponseEntity<LoginResponse> JwtParser(LoginResponse loginResponse) {
+//        return ResponseEntity.ok(new LoginResponse())
+//    }
 }
