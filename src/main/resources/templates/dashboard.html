@@ -9,18 +9,18 @@
     <h1>Welcome, <span th:text="${#authentication.name}">User</span>!</h1>
 
     <!-- Admin Section -->
-    <div th:if="${#authentication.authorities.contains('ROLE_ADMIN')}">
+    <div th:if="${#authentication.name == 'admin'}">
         <h2>Admin Dashboard</h2>
         <ul>
             <li><a th:href="@{/books}">Manage Books</a></li>
-            <li><a th:href="@{/users}">Manage Users</a></li>
+            <li><a th:href="@{/api/users}">Manage Users</a></li>
             <li><a th:href="@{/borrowings}">View Borrowing Transactions</a></li>
             <li><a th:href="@{/returns}">View Return Transactions</a></li>
         </ul>
     </div>
 
     <!-- User Section -->
-    <div th:if="${#authentication.authorities.contains('ROLE_USER')}">
+    <div th:if="${#authentication.name == 'user'}">
         <h2>User Dashboard</h2>
         <ul>
             <li><a th:href="@{/borrowings/my}">View Borrowed Books</a></li>
