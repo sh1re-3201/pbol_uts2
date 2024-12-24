@@ -4,6 +4,7 @@ import com.sh1re.goldenbay.dto.BookDTO;
 import com.sh1re.goldenbay.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,11 +23,11 @@ public class BookController {
         return ResponseEntity.ok(createdBook);
     }
 
-    // Get all books
     @GetMapping
-    public ResponseEntity<List<BookDTO>> getAllBooks() {
+    public String getAllBooks(Model model) {
         List<BookDTO> books = bookService.getAllBooks();
-        return ResponseEntity.ok(books);
+        model.addAttribute("books", books);
+        return "books"; // This should be the name of your HTML template
     }
 
     // Get book by ID

@@ -3,12 +3,15 @@ package com.sh1re.goldenbay.controller;
 import com.sh1re.goldenbay.dto.UserDTO;
 import com.sh1re.goldenbay.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.ui.Model;
+
 
 import java.util.List;
 
-@RestController
+@Controller
 @RequestMapping("/api/users")
 public class UserController {
 
@@ -24,9 +27,10 @@ public class UserController {
 
     // Get all users
     @GetMapping
-    public ResponseEntity<List<UserDTO>> getAllUsers() {
+    public String getAllUsers(Model model) {
         List<UserDTO> users = userService.getAllUsers();
-        return ResponseEntity.ok(users);
+        model.addAttribute("users", users);
+        return "users"; // This should be the name of your HTML template
     }
 
     // Get user by ID

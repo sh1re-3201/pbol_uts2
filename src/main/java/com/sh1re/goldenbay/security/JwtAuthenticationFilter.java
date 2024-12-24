@@ -1,5 +1,5 @@
 package com.sh1re.goldenbay.security;
-//
+
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -11,44 +11,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-
+import jakarta.servlet.http.Cookie;
 import java.io.IOException;
-
-//@Component
-//public class JwtAuthenticationFilter extends OncePerRequestFilter {
-//
-//    private final JwtUtil jwtUtil;
-//    private final UserDetailsService userDetailsService;
-//
-//    public JwtAuthenticationFilter(JwtUtil jwtUtil, UserDetailsService userDetailsService) {
-//        this.jwtUtil = jwtUtil;
-//        this.userDetailsService = userDetailsService;
-//    }
-//
-//    @Override
-//    protected void doFilterInternal(HttpServletRequest request,
-//                                    HttpServletResponse response,
-//                                    FilterChain filterChain) throws ServletException, IOException {
-//        String authHeader = request.getHeader("Authorization");
-//
-//        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-//            String jwt = authHeader.substring(7);
-//            String username = jwtUtil.extractUsername(jwt);
-//
-//            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-//                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-//
-//                if (jwtUtil.validateToken(jwt, userDetails)) {
-//                    UsernamePasswordAuthenticationToken authToken =
-//                            new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-//                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-//                    SecurityContextHolder.getContext().setAuthentication(authToken);
-//                }
-//            }
-//        }
-//        filterChain.doFilter(request, response);
-//    }
-//}
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,48 +40,42 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
-        String authHeader = request.getHeader("Authorization");
+        String jwt = null;
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("Authorization".equals(cookie.getName())) {
+                    jwt = cookie.getValue();
+                    break;
+                }
+            }
+        }
+
         logger.debug("Processing request to: {}", request.getRequestURI());
-        logger.debug("Authorization header: {}", authHeader);
-        System.out.println("Processing request to: " + request.getRequestURI());
-        System.out.println("Auth Header: " + authHeader);
+        logger.debug("JWT from cookie: {}", jwt);
 
-
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            String jwt = authHeader.substring(7);
-            logger.debug("Extracted JWT: {}", jwt);
-            System.out.println("Extracted JWT: " + jwt);
-
+        if (jwt != null) {
             String username = jwtUtil.extractUsername(jwt);
             logger.debug("Extracted username from JWT: {}", username);
-            System.out.println("Extracted username from JWT: " + username);
 
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);
                 logger.debug("Loaded user details: {}", userDetails.getUsername());
-                logger.debug("User credentials: {}", userDetails.getPassword());
-
-                System.out.println("Loaded user details: " + userDetails.getUsername());
-                System.out.println("user creds: " + userDetails.getPassword());
 
                 if (jwtUtil.validateToken(jwt, userDetails)) {
                     logger.debug("JWT is valid for user: {}", username);
-                    System.out.println("JWT is valid for user: " + username);
                     UsernamePasswordAuthenticationToken authToken =
                             new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 } else {
                     logger.debug("JWT validation failed for user: {}", username);
-                    System.out.println("JWT validation failed for: " + username);
                 }
             }
         } else {
-            logger.debug("No valid Authorization header found.");
-            System.out.println("No valid auth header found");
+            logger.debug("No valid JWT found in cookies.");
         }
 
         filterChain.doFilter(request, response);
     }
 }
-

@@ -1,13 +1,16 @@
 package com.sh1re.goldenbay.service;
 
+import com.sh1re.goldenbay.config.SecurityConfig;
 import com.sh1re.goldenbay.dto.UserDTO;
 import com.sh1re.goldenbay.model.User;
 import com.sh1re.goldenbay.model.Role;
 import com.sh1re.goldenbay.repository.UserRepository;
+import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import java.time.LocalDateTime;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,6 +22,8 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    private SecurityConfig securityConfig;
 
     // Create a new user
     public UserDTO createUser(UserDTO userDTO) {
@@ -95,5 +100,24 @@ public class UserService {
 
         return userDTO;
     }
+
+    @PostConstruct
+    public void init() {
+        try {
+            System.out.println("Initializing users...");
+            if (userRepository.findByUsername("admin").isEmpty()) {
+                userRepository.save(new User("admin", "admin", Role.ADMIN, "admin@gmail.com", LocalDateTime.now()));
+                System.out.println("Admin user created.");
+            }
+            if (userRepository.findByUsername("user").isEmpty()) {
+                userRepository.save(new User("user","password", Role.USER, "user@gmail.com", LocalDateTime.now()));
+                System.out.println("Regular user created.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Error during UserService initialization", e);
+        }
+    }
+
 
 }

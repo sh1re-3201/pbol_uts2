@@ -12,7 +12,7 @@
     <div th:if="${#authentication.name == 'admin'}">
         <h2>Admin Dashboard</h2>
         <ul>
-            <li><a th:href="@{/books}">Manage Books</a></li>
+            <li><a th:href="@{/api/books}">Manage Books</a></li>
             <li><a th:href="@{/api/users}">Manage Users</a></li>
             <li><a th:href="@{/borrowings}">View Borrowing Transactions</a></li>
             <li><a th:href="@{/returns}">View Return Transactions</a></li>

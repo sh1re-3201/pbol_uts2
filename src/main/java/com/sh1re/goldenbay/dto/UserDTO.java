@@ -1,14 +1,13 @@
 package com.sh1re.goldenbay.dto;
 
-import com.sh1re.goldenbay.model.Role;
-import lombok.Getter;
-import lombok.Setter;
+import java.time.LocalDateTime;
 
 public class UserDTO {
     private Long id;
     private String username;
     private String email;
     private String role;
+    private LocalDateTime membershipDate;
 
     // Getters and Setters
     public Long getId() {
@@ -41,5 +40,13 @@ public class UserDTO {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public LocalDateTime getMembershipDate() {
+        return membershipDate;
+    }
+
+    public void setMembershipDate(LocalDateTime membershipDate) {
+        this.membershipDate = membershipDate;
     }
 }

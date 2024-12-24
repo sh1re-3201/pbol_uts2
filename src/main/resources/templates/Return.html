@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Returns</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0-alpha1/css/bootstrap.min.css">
+</head>
+<body>
+
+<div class="container mt-4">
+
+    <!-- Header -->
+    <h1>Return Records</h1>
+
+    <!-- List of Returns -->
+    <h3>List of Returns</h3>
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th scope="col">Return ID</th>
+            <th scope="col">Borrowing ID</th>
+            <th scope="col">Return Date</th>
+            <th scope="col">Actions</th>
+        </tr>
+        </thead>
+        <tbody id="returnList">
+        <!-- Returns will be loaded here dynamically via JavaScript -->
+        </tbody>
+    </table>
+
+    <!-- Add New Return -->
+    <h3>Add New Return</h3>
+    <form id="createReturnForm">
+        <div class="mb-3">
+            <label for="borrowingId" class="form-label">Borrowing ID</label>
+            <input type="number" class="form-control" id="borrowingId" required>
+        </div>
+        <div class="mb-3">
+            <label for="returnDate" class="form-label">Return Date</label>
+            <input type="datetime-local" class="form-control" id="returnDate" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0-alpha1/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Fetch and display all returns
+    function loadReturns() {
+        fetch('/api/returns')
+            .then(response => response.json())
+            .then(data => {
+                const returnList = document.getElementById("returnList");
+                returnList.innerHTML = "";
+                data.forEach(returnRecord => {
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                            <td>${returnRecord.id}</td>
+                            <td>${returnRecord.borrowingId}</td>
+                            <td>${new Date(returnRecord.returnDate).toLocaleString()}</td>
+                            <td>
+                                <button class="btn btn-danger" onclick="deleteReturn(${returnRecord.id})">Delete</button>
+                            </td>
+                        `;
+                    returnList.appendChild(row);
+                });
+            });
+    }
+
+    // Handle return creation
+    document.getElementById("createReturnForm").addEventListener("submit", function(event) {
+        event.preventDefault();
+        const borrowingId = document.getElementById("borrowingId").value;
+        const returnDate = document.getElementById("returnDate").value;
+
+        const returnData = {
+            borrowingId: borrowingId,
+            returnDate: returnDate
+        };
+
+        fetch('/api/returns', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(returnData)
+        })
+            .then(response => response.json())
+            .then(data => {
+                loadReturns(); // Reload the return list after creating a new return
+                document.getElementById("createReturnForm").reset(); // Clear the form
+            })
+            .catch(error => console.error('Error creating return:', error));
+    });
+
+    // Delete return by ID
+    function deleteReturn(id) {
+        if (confirm("Are you sure you want to delete this return record?")) {
+            fetch(`/api/returns/${id}`, {
+                method: 'DELETE'
+            })
+                .then(() => {
+                    loadReturns(); // Reload the return list after deleting
+                })
+                .catch(error => console.error('Error deleting return:', error));
+        }
+    }
+
+    // Load returns when the page is ready
+    window.onload = loadReturns;
+</script>
+</body>
+</html>

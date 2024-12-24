@@ -47,11 +47,4 @@ public class AuthenticationController {
         // Return the token in the response body
         return ResponseEntity.ok(new LoginResponse(jwt));
     }
-
-
-
-//    @GetMapping("/login")
-//    public ResponseEntity<LoginResponse> JwtParser(LoginResponse loginResponse) {
-//        return ResponseEntity.ok(new LoginResponse())
-//    }
 }

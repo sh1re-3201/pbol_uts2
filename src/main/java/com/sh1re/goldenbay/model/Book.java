@@ -22,6 +22,13 @@ public class Book {
     public Book() {
     }
 
+    public Book(String title, String author, Integer publicationYear, Boolean availability) {
+        this.title = title;
+        this.author = author;
+        this.publicationYear = publicationYear;
+        this.availability = availability;
+    }
+
     public Long getId() {
         return this.id;
     }

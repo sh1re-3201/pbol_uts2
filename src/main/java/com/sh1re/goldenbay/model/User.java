@@ -27,6 +27,14 @@ public class User {
     public User() {
     }
 
+    public User(String username, String password, Role role, String email, LocalDateTime membershipDate) {
+        this.username = username;
+        this.password = password;
+        this.role = role;
+        this.email = email;
+        this.membershipDate = membershipDate;
+    }
+
     public Long getId() {
         return this.id;
     }

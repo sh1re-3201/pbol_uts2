@@ -3,9 +3,11 @@ package com.sh1re.goldenbay.service;
 import com.sh1re.goldenbay.dto.BookDTO;
 import com.sh1re.goldenbay.model.Book;
 import com.sh1re.goldenbay.repository.BookRepository;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -51,6 +53,21 @@ public class BookService {
     // Delete book
     public void deleteBook(Long id) {
         bookRepository.deleteById(id);
+    }
+
+    @PostConstruct
+    public void init() {
+        try {
+            System.out.println("Initializing books...");
+                bookRepository.save(new Book("Bible", "Various Artists", 100, true));
+
+                bookRepository.save(new Book("Spider-Man", "Stan Lee", 1982, false));
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Error during UserService initialization", e);
+        }
     }
 
     // Convert DTO to Entity

@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>User Management</title>
-    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <!--    <link rel="stylesheet" th:href="@{/css/styles.css}">-->
 </head>
 <body>
 <div class="container">
@@ -21,41 +21,25 @@
             <th>Actions</th>
         </tr>
         </thead>
-        <tbody id="userTable">
-        <!-- Rows will be dynamically added here -->
+        <tbody>
+        <!-- Thymeleaf iteration to display rows -->
+        <tr th:each="user : ${users}">
+            <td th:text="${user.id}">1</td>
+            <td th:text="${user.username}">John Doe</td>
+            <td th:text="${user.email}">john.doe@example.com</td>
+            <td th:text="${user.role}">USER</td>
+            <td th:text="${user.membershipDate != null ? user.membershipDate : 'N/A'}">
+                2023-01-01 00:00
+            </td>
+            <td>
+                <button th:onclick="'editUser(' + ${user.id} + ')'">Edit</button>
+                <button th:onclick="'deleteUser(' + ${user.id} + ')'">Delete</button>
+            </td>
+        </tr>
         </tbody>
     </table>
+    <button th:onclick="'addUser'">Add</button>
 
-    <!-- Add User -->
-    <h2>Add User</h2>
-    <form id="addUserForm">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required><br>
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required><br>
-        <label for="role">Role:</label>
-        <select id="role" name="role">
-            <option value="ADMIN">Admin</option>
-            <option value="USER">User</option>
-        </select><br>
-        <button type="button" onclick="addUser()">Add User</button>
-    </form>
-
-    <!-- Update User -->
-    <h2>Update User</h2>
-    <form id="updateUserForm" style="display:none;">
-        <input type="hidden" id="updateUserId">
-        <label for="updateUsername">Username:</label>
-        <input type="text" id="updateUsername" required><br>
-        <label for="updateEmail">Email:</label>
-        <input type="email" id="updateEmail" required><br>
-        <label for="updateRole">Role:</label>
-        <select id="updateRole">
-            <option value="ADMIN">Admin</option>
-            <option value="USER">User</option>
-        </select><br>
-        <button type="button" onclick="updateUser()">Update User</button>
-    </form>
 
     <script th:inline="javascript">
         const apiUrl = /*[[@{/api/users}]]*/ '/api/users';
@@ -151,6 +135,7 @@
                     .then(response => {
                         if (response.ok) {
                             alert('User deleted successfully');
+                            location.reload();
                             fetchUsers();
                         } else {
                             alert('Failed to delete user');
